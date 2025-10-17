@@ -1,9 +1,10 @@
 import http from 'http';
 import { OpenAI } from 'openai';
+import { getEmbeddings } from "./utils";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const SYSTEM_PROMPT = `
+const system_prompt = `
     You are an expert assistant for CloudWalk, a Brazilian fintech company.
     You answer questions about:
     - What CloudWalk is
@@ -14,7 +15,7 @@ const SYSTEM_PROMPT = `
     If asked something unrelated to CloudWalk, politely redirect the user to CloudWalk topics.
 `;
 
-//TODO: RAG
+const embeddings = JSON.parse(fs.readFileSync("embeddings.json", "utf8"));
 
 const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && req.url === '/chat') {
@@ -22,12 +23,16 @@ const server = http.createServer(async (req, res) => {
     
     req.on('data', chunk => (body += chunk));
     req.on('end', async () => {
-      const { message } = JSON.parse(body);
+      const { query } = JSON.parse(body);
+
+      const queryEmbedding = await getEmbeddings(client, query);
+      const relevantEmbeddings = retrieveRelevantDocs(queryEmbedding.data[0].embedding, embeddings);
+
       const completion = await client.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
-          { role: 'user', content: message }
+          { role: 'system', content: system_prompt },
+          { role: 'user', content: `Context:\n${relevantEmbeddings}\n\nQuestion: ${query}` }
         ]
       });
       
