@@ -1,1 +1,6 @@
-
+* Infinitepay
+InfinitePay is a powerful financial platform democratizing access to world-class payment products and software, currently serving millions of clients in Brazil. Launched in 2019, it represented the most disruptive wave of innovation in the Brazilian payments industry.
+* Jim
+JIM is bringing the power of instant payments for everyone in the US. Combining cutting edge technology with unparalleled design, JIM enables sellers to accept payments, receive the money instantly, and have access to a next generation AI assistant.
+* Stratus
+Developed by CloudWalk, STRATUS is a high performance, secure, scalable, and open-source blockchain designed for global payment networks. It boasts high scalability, processing up to 1,800 transactions per second (TPS). With potential for infinite growth through sharding and multi-raft consensus models.

@@ -10,7 +10,7 @@ let documents = [];
 
 for (const file of files) {
   const text = fs.readFileSync(`content/${file}`, "utf8");
-  const chunks = text.match(/[\s\S]{1,800}/g); // simple chunking (max 800 chars)
+  const chunks = text.match(/[\s\S]{1,800}/g);
   
   for (const chunk of chunks) {
     const embedding = await getEmbeddings(client, chunk);
@@ -22,5 +22,4 @@ for (const file of files) {
   }
 }
 
-// Save embeddings
 fs.writeFileSync("embeddings.json", JSON.stringify(documents, null, 2));
