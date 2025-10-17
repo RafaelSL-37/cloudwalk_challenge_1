@@ -1,6 +1,6 @@
 import http from 'http';
 import { OpenAI } from 'openai';
-import { getEmbeddings } from "./utils";
+import { getEmbeddings, retrieveRelevantDocs } from "./utils";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
