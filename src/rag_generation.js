@@ -4,7 +4,7 @@ import { getEmbeddings } from "./utils";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const files = ["cloudwalk_mission.txt", "cloudwalk_products.txt", "cloudwalk_values.txt", "infinitepay_features.txt"];
+const files = ["cloudwalk_mission.txt", "cloudwalk_products.txt", "cloudwalk_values.txt"];
 
 let documents = [];
 
