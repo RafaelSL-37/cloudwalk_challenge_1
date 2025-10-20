@@ -1,26 +1,15 @@
 import http from 'http';
 import fs from "fs";
-import { OpenAI } from 'openai';
+import { OpenAiClient } from './middlewares/openai.js';
+import { OpenRouterClient } from './middlewares/openrouter.js';
 import 'dotenv/config';
-import { getEmbeddings, retrieveRelevantDocs } from "./utils.js";
 
 console.log(process.env.OPENAI_API_KEY)
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const system_prompt = `
-    You are an expert assistant for CloudWalk, a Brazilian fintech company.
-    You answer questions about:
-    - What CloudWalk is
-    - Its products, such as InfinitePay
-    - Its mission and values
-    - How its technology, services, and vision impact businesses
-    You reply in clear natural language (optionally Markdown), with factual, concise, and friendly explanations.
-    If asked something unrelated to CloudWalk, politely redirect the user to CloudWalk topics.
-`;
-
-const embeddings = JSON.parse(fs.readFileSync("embeddings.json", "utf8"));
-
 const server = http.createServer(async (req, res) => {
+  const chosenLlm = process.env.LLM;
+
   if (req.method === 'POST' && req.url === '/chat') {
     let body = '';
     
@@ -28,20 +17,26 @@ const server = http.createServer(async (req, res) => {
     req.on('end', async () => {
       const { query } = JSON.parse(body);
 
-      const queryEmbedding = await getEmbeddings(client, query);
-      const relevantEmbeddings = retrieveRelevantDocs(queryEmbedding.data[0].embedding, embeddings);
+      if (chosenLlm = "OPENROUTER") {
+        const openRouterClient = new OpenRouterClient();
 
-      const completion = await client.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: system_prompt },
-          { role: 'user', content: `Context:\n${relevantEmbeddings}\n\nQuestion: ${query}` }
-        ]
-      });
-      
-      const reply = completion.choices[0].message.content;
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ reply }));
+        // const queryEmbedding = await getOpenRouterEmbeddings(client, query);
+        // const relevantEmbeddings = retrieveRelevantDocs(queryEmbedding.data[0].embedding, embeddings);
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ reply }));
+      } else if (chosenLlm = "OPENAI") {
+        const openAiClient = new OpenAiClient();
+
+        await openAiClient.getEmbeddings(query);
+        const reply = openAiClient.getOpenaiResponse()
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ reply }));
+      } else {
+        res.writeHead(404);
+        res.end();
+      }
     });
   } else {
     res.writeHead(404);
