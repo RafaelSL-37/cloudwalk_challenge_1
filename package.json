@@ -1,0 +1,9 @@
+{
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "fs": "^0.0.1-security",
+    "openai": "^6.6.0"
+  }
+}

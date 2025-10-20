@@ -1,7 +1,10 @@
 import http from 'http';
+import fs from "fs";
 import { OpenAI } from 'openai';
-import { getEmbeddings, retrieveRelevantDocs } from "./utils";
+import 'dotenv/config';
+import { getEmbeddings, retrieveRelevantDocs } from "./utils.js";
 
+console.log(process.env.OPENAI_API_KEY)
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const system_prompt = `

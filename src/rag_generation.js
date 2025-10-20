@@ -1,6 +1,7 @@
 import fs from "fs";
 import OpenAI from "openai";
-import { getEmbeddings } from "./utils";
+import 'dotenv/config';
+import { getEmbeddings } from "./utils.js";
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -9,11 +10,13 @@ const files = ["cloudwalk_mission.txt", "cloudwalk_products.txt", "cloudwalk_val
 let documents = [];
 
 for (const file of files) {
-  const text = fs.readFileSync(`content/${file}`, "utf8");
+  const text = fs.readFileSync(`src/content/${file}`, "utf8");
   const chunks = text.match(/[\s\S]{1,800}/g);
   
   for (const chunk of chunks) {
     const embedding = await getEmbeddings(client, chunk);
+
+    console.log(embedding)
 
     documents.push({
       text: chunk,
