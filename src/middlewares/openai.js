@@ -1,17 +1,18 @@
 import { getSystemPrompt } from "../utils";
 import 'dotenv/config';
 import { OpenAI } from 'openai';
+import { retrieveRelevantDocs } from '../utils'
 
 export class OpenAiClient {
     constructor() {
         this.key = process.env.OPENAI_API_KEY;
-        this.relevantEmbeddings = null;
+        this.relevantEmbeddings = '';
     }
 
-    async getOpenaiResponse(query, embedding){
+    async getOpenaiResponse(query){
         const client = new OpenAI({ apiKey: this.key });
 
-        const completion = await client.chat.completions.create({
+        const response = await client.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [
                 { role: 'system', content: getSystemPrompt() },
@@ -19,7 +20,7 @@ export class OpenAiClient {
             ]
         });
 
-        return completion.choices[0].message.content;
+        return response.choices[0].message.content;
     }
 
     async getEmbeddings(query) {

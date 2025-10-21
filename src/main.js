@@ -1,11 +1,7 @@
 import http from 'http';
-import fs from "fs";
 import { OpenAiClient } from './middlewares/openai.js';
 import { OpenRouterClient } from './middlewares/openrouter.js';
 import 'dotenv/config';
-
-console.log(process.env.OPENAI_API_KEY)
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const server = http.createServer(async (req, res) => {
   const chosenLlm = process.env.LLM;
@@ -20,8 +16,8 @@ const server = http.createServer(async (req, res) => {
       if (chosenLlm = "OPENROUTER") {
         const openRouterClient = new OpenRouterClient();
 
-        // const queryEmbedding = await getOpenRouterEmbeddings(client, query);
-        // const relevantEmbeddings = retrieveRelevantDocs(queryEmbedding.data[0].embedding, embeddings);
+        await openRouterClient.getEmbeddings(query);
+        const reply = await openRouterClient.getResponse(query);
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ reply }));

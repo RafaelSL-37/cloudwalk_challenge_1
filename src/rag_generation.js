@@ -14,7 +14,7 @@ for (const file of files) {
   const chunks = text.match(/[\s\S]{1,800}/g);
   
   for (const chunk of chunks) {
-    const embedding = await getEmbeddings(client, chunk);
+    const embedding = await getEmbeddings(client, chunk); //TODO: refactor this to use current llm
 
     console.log(embedding)
 
